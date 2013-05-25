@@ -1,4 +1,4 @@
-define(["domReady!","imageManager","shapes"],function(dom,imageManager,shapes)
+define(["domReady!","imageManager","gates"],function(dom,imageManager,gates)
 {
 	"use strict";
 
@@ -40,8 +40,9 @@ define(["domReady!","imageManager","shapes"],function(dom,imageManager,shapes)
 			if (gate.rect.contains(localX,localY))
 			{
 				selection = gate;
-				dragOffsetX = localX - gate.rect.x;
-				dragOffsetY = localY - gate.rect.y;
+				gate.setSelected(true);
+				dragOffsetX = localX - gate.pos.getX();
+				dragOffsetY = localY - gate.pos.getY();
 				return;
 			}
 		});
@@ -56,28 +57,25 @@ define(["domReady!","imageManager","shapes"],function(dom,imageManager,shapes)
 			var targetX = localX - dragOffsetX;
 			var targetY = localY - dragOffsetY;
 
-			selection.rect.x = targetX;
-			selection.rect.y = targetY;
-
+			selection.setPosition(targetX,targetY);
 		}
 
 	}  );
 	
 
 	$(canvas).mouseup(function() {
+		selection.setSelected(false);
 		selection = null;
 	});
 
 	imageManager.loadImages(["and.png","not.png","or.png","xor.png","nand.png"], function(result)
 	{
+		gates.setImages(result);
 		obj.drawGate = function(name,x,y)
 		{
-			console.log(result);
-			var gateObj = {
-				"name": name,
-				"rect": new shapes.Rect(x,y,200,100)
-			};
+			var gateObj = new gates.Gate(x,y,name);
 			currentGates.push(gateObj);
+			console.log(gateObj);
 			
 		};
 
@@ -87,18 +85,9 @@ define(["domReady!","imageManager","shapes"],function(dom,imageManager,shapes)
 
 			currentGates.forEach(function(gate)
 			{
-				gate.rect.draw(ctx);
-				ctx.drawImage(result[gate.name+".png"],gate.rect.x,gate.rect.y);
+				gate.draw(ctx);
+				
 			});
-
-			if (selection)
-			{
-				ctx.save();
-				ctx.strokeStyle = "green";
-				ctx.lineWidth = 3;
-				selection.rect.draw(ctx);
-				ctx.restore();
-			}
 
 			window.requestAnimationFrame(animate);
 		}
