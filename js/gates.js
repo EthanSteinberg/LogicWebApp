@@ -46,7 +46,14 @@ define(["shapes"],function(shapes)
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "black";
 
+		
+
+		if (this.outputSelected)
+		{
+			ctx.strokeStyle = "green";
+		}
 		this.output.draw(ctx);
+		ctx.strokeStyle = "black";
 				
 	};
 

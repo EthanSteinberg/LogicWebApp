@@ -1,4 +1,4 @@
-define(["domReady!","imageManager","gates"],function(dom,imageManager,gates)
+define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,gates,wires)
 {
 	"use strict";
 
@@ -9,14 +9,19 @@ define(["domReady!","imageManager","gates"],function(dom,imageManager,gates)
 	var callbacks = [];
 	var canvas = document.getElementById("mainCanvas");
 	console.log(canvas);
+	var ctx = canvas.getContext("2d");
 
 	var readyYet = false;
 
 	var currentGates = [];
-	var ctx = canvas.getContext("2d");
+	var currentWires = [];
+	var currentNodes = [];
 
-	var dragging = false;
+	var wireMode;
+	
+
 	var selection = null;
+	var outputSelection = null;
 
 	var dragOffsetX;
 	var dragOffsetY;
@@ -32,12 +37,23 @@ define(["domReady!","imageManager","gates"],function(dom,imageManager,gates)
 	}
 
 	$(canvas).mousedown(function(event){
+		event.preventDefault();
+
+
 		var localX = getLocalX(event);
 		var localY = getLocalY(event);
 
+		if (wireMode)
+		{
+
+			return;
+		}
+
+		
+
 		currentGates.forEach(function (gate)
 		{
-			if (gate.rect.contains(localX,localY))
+			if (!selection && gate.rect.contains(localX,localY))
 			{
 				selection = gate;
 				gate.setSelected(true);
@@ -49,6 +65,7 @@ define(["domReady!","imageManager","gates"],function(dom,imageManager,gates)
 	});
 	
 	$(canvas).mousemove(function(event){
+		event.preventDefault();
 		if (selection)
 		{
 			var localX = getLocalX(event);
@@ -64,8 +81,12 @@ define(["domReady!","imageManager","gates"],function(dom,imageManager,gates)
 	
 
 	$(canvas).mouseup(function() {
-		selection.setSelected(false);
-		selection = null;
+		event.preventDefault();
+		if (selection)
+		{
+			selection.setSelected(false);
+			selection = null;
+		}
 	});
 
 	imageManager.loadImages(["and.png","not.png","or.png","xor.png","nand.png"], function(result)
@@ -89,6 +110,12 @@ define(["domReady!","imageManager","gates"],function(dom,imageManager,gates)
 				
 			});
 
+			currentNodes.forEach(function(node)
+			{
+				node.draw(ctx);
+				
+			});
+
 			window.requestAnimationFrame(animate);
 		}
 
@@ -109,6 +136,16 @@ define(["domReady!","imageManager","gates"],function(dom,imageManager,gates)
 		else
 			funcToCall();
 	};
+
+	obj.setWireMode = function(value)
+	{
+		wireMode = value;
+	};
+
+	obj.addNode = function(x,y)
+	{
+		currentNodes.push(new wires.Node(x,y));
+	}
 
 
 
