@@ -57,6 +57,21 @@ define(["shapes"],function(shapes)
 				
 	};
 
+	Gate.prototype.contains = function(x,y)
+	{
+		return this.rect.contains(x,y);
+	};
+
+	Gate.prototype.getX = function()
+	{
+		return this.pos.x;
+	};
+
+	Gate.prototype.getY = function()
+	{
+		return this.pos.y;
+	};
+
 	obj.Gate =Gate;
 	return obj;
 });

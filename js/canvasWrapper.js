@@ -17,7 +17,10 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 	var currentWires = [];
 	var currentNodes = [];
 
+	var movableObjects = [];
+
 	var wireMode;
+	var wireStage = 0;
 	
 
 	var selection = null;
@@ -45,20 +48,29 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 
 		if (wireMode)
 		{
-
+			var newSelected = null;
+			currentNodes.forEach(function (object)
+			{
+				if (!newSelected && object.contains(localX,localY))
+				{
+					newSelected = object;
+					object.setSelected(true);
+					return;
+				}
+			});
 			return;
 		}
 
 		
 
-		currentGates.forEach(function (gate)
+		movableObjects.forEach(function (object)
 		{
-			if (!selection && gate.rect.contains(localX,localY))
+			if (!selection && object.contains(localX,localY))
 			{
-				selection = gate;
-				gate.setSelected(true);
-				dragOffsetX = localX - gate.pos.getX();
-				dragOffsetY = localY - gate.pos.getY();
+				selection = object;
+				object.setSelected(true);
+				dragOffsetX = localX - object.getX();
+				dragOffsetY = localY - object.getY();
 				return;
 			}
 		});
@@ -96,6 +108,7 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 		{
 			var gateObj = new gates.Gate(x,y,name);
 			currentGates.push(gateObj);
+			movableObjects.push(gateObj);
 			console.log(gateObj);
 			
 		};
@@ -140,11 +153,15 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 	obj.setWireMode = function(value)
 	{
 		wireMode = value;
+		wireStage = 0;
 	};
 
 	obj.addNode = function(x,y)
 	{
-		currentNodes.push(new wires.Node(x,y));
+		var newNode = new wires.Node(x,y)
+		currentNodes.push(newNode);
+		movableObjects.push(newNode);
+
 	}
 
 
