@@ -68,7 +68,7 @@ define(["domReady!","imageManager","shapes"],function(dom,imageManager,shapes)
 		selection = null;
 	});
 
-	imageManager.loadImages(["and.png","not.png","or.png"], function(result)
+	imageManager.loadImages(["and.png","not.png","or.png","xor.png","nand.png"], function(result)
 	{
 		obj.drawGate = function(name,x,y)
 		{

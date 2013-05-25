@@ -1,11 +1,18 @@
-define(["canvasWrapper"],function(canvasWrapper)
+define(["canvasWrapper","buttonController"],function(canvasWrapper,buttonController)
 {
 	"use strict";
 
+
+
 	canvasWrapper.canvasReady(function()
 	{
-		//alert("Images loaded");
-		canvasWrapper.drawGate("and",0,0);
 		console.timeStamp("images loaded");
+
+		buttonController.onAddGate(function (gate)
+		{
+			canvasWrapper.drawGate(gate,0,0);
+		});
+		
+		
 	});
 });
