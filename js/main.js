@@ -10,31 +10,22 @@ define(["canvasWrapper","buttonController","modes"],function(canvasWrapper,butto
 
 
 		console.timeStamp("images loaded");
-		canvasWrapper.drawGate("and",0,0);
 
 		buttonController.onAddGate(function (gate)
 		{
-			canvasWrapper.drawGate(gate,0,0);
+			canvasWrapper.addGate(gate,0,0);
 		});
 
-		buttonController.onWireMode(function (value)
-		{
-			canvasWrapper.setWireMode(value);
-		});
-
+	
 		buttonController.onAddNode(function ()
 		{
 			canvasWrapper.addNode(20,20);
 		});
 
-		buttonController.onEraseMode(function (value)
-		{
-			canvasWrapper.setEraseMode(value);
-		});
 
 		buttonController.onSetMode(function (mode)
 		{
-			canvasWrapper.setMode(mode);
+			canvasWrapper.setMode(modes.getMode(mode));
 		});
 		
 		

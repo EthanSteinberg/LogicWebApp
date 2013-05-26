@@ -31,14 +31,13 @@ define(function()
 	MoveMode.prototype.mousedown = function(x,y,state)
 	{
 
-
 		state.currentNodes.forEach(function (object)
 		{
 			if (!this.selection && !object.hasGate() && object.contains(x,y))
 			{
 				this.selection = object;
 			}
-		});
+		},this);
 
 		state.currentGates.forEach(function (object)
 		{
@@ -47,7 +46,7 @@ define(function()
 				this.selection = object;
 			}
 
-		});
+		},this);
 
 		if (this.selection)
 		{

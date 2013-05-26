@@ -6,6 +6,7 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 
 	var obj = {};
 
+
 	var callbacks = [];
 	var canvas = document.getElementById("mainCanvas");
 	console.log(canvas);
@@ -19,23 +20,7 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 		"currentNodes": []
 	};
 
-	var mode = "Add Mode";
-
-	var movableObjects = [];
-
-	var wireMode = false;
-	
-	var eraseMode = false;
-	
-	var tempNode;
-	var newWire;
-
-	var selection = null;
-
-	var dragOffsetX;
-	var dragOffsetY;
-
-	var newSelection;
+	var mode = null;
 
 	function getLocalX(event)
 	{
@@ -49,128 +34,10 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 
 	$(canvas).mousedown(function(event){
 		event.preventDefault();
-
-
 		var localX = getLocalX(event);
 		var localY = getLocalY(event);
-
-		switch(mode)
-		{
-
-			case "Wire Mode":
-
-
-			if (!selection)
-			{
-				if (newSelection)
-				{
-					newSelection.setSelected(false);
-					newSelection = null;
-				}
-
-				state.currentNodes.forEach(function (object)
-				{
-					if (!selection && object.contains(localX,localY))
-					{
-						selection = object;
-						object.setSelected(true);
-						return;
-					}
-				});
-
-				if (selection)
-				{
-					tempNode = new wires.Node(localX,localY);
-					newWire = new wires.Wire(selection,tempNode);
-					state.currentWires.push(newWire);
-				}
-			}
-			else
-			{
-				if (newSelection)
-				{
-					newSelection.setSelected(false);
-					newSelection = null;
-				}
-
-				state.currentNodes.forEach(function (object)
-				{
-					if (!newSelection && object !== selection && object.contains(localX,localY))
-					{
-						newSelection = object;
-						return;
-					}
-				});
-				newWire.setStopNode(newSelection);
-				selection.setSelected(false);
-				selection = null;
-
-			}
-			break;
-
-		case "Delete Mode":
-
-		
-			if (selection)
-			{
-				selection.setSelected(false);
-				selection = null;
-
-			}
-
-
-			state.currentWires.forEach(function (object)
-			{
-				if (!selection && object.contains(localX,localY))
-				{
-					selection = object;
-					selection.setSelected(true);
-				}
-			});
-
-			state.currentNodes.forEach(function (object)
-			{
-				if (!selection && !object.hasGate() && object.contains(localX,localY))
-				{
-					selection = object;
-					selection.setSelected(true);
-				}
-			});
-
-			state.currentGates.forEach(function (object)
-			{
-				if (!selection && object.contains(localX,localY))
-				{
-					selection = object;
-					selection.setSelected(true);
-				}
-
-			});
-
-			if (selection)
-			{
-				selection.destroy(state);
-				selection = null;
-				return;
-			}
-			break;
-
-
-
-		case "Add Mode":
-			movableObjects.forEach(function (object)
-			{
-				if (!selection && object.contains(localX,localY))
-				{
-					selection = object;
-					object.setSelected(true);
-					dragOffsetX = localX - object.getX();
-					dragOffsetY = localY - object.getY();
-					return;
-				}
-			});
-			break;
-		}
+		if (mode)
+			mode.mousedown(localX,localY,state);
 	});
 
 
@@ -181,108 +48,28 @@ $(canvas).mousemove(function(event){
 	var localX = getLocalX(event);
 	var localY = getLocalY(event);
 
-	switch(mode)
-	{
-		case "Wire Mode":
-		if (selection)
-			tempNode.setPosition(localX,localY);
+	if (mode)
+		mode.mousemove(localX,localY,state);
 
-		if (newSelection)
-		{
-			newSelection.setSelected(false);
-			newSelection = null;
-		}
-		state.currentNodes.forEach(function (object)
-		{
-			if (!newSelection && object !== selection && object.contains(localX,localY))
-			{
-				newSelection = object;
-				newSelection.setSelected(true);
-				return;
-			}
-		});
-		break;
-
-
-	case "Delete Mode":
-		if (selection)
-		{
-			selection.setSelected(false);
-			selection = null;
-
-		}
-		state.currentWires.forEach(function (object)
-		{
-			if (!selection && object.contains(localX,localY))
-			{
-				selection = object;
-				selection.setSelected(true);
-			}
-		});
-
-		state.currentNodes.forEach(function (object)
-		{
-			if (!selection && !object.hasGate()&&object.contains(localX,localY))
-			{
-				selection = object;
-				selection.setSelected(true);
-			}
-		});
-
-		state.currentGates.forEach(function (object)
-		{
-			if (!selection && object.contains(localX,localY))
-			{
-				selection = object;
-				selection.setSelected(true);
-			}
-		});
-		break;
-	
-
-	case "Add Mode":
-		if (selection)
-		{
-			var targetX = localX - dragOffsetX;
-			var targetY = localY - dragOffsetY;
-
-			selection.setPosition(targetX,targetY);
-		}
-		break;
-	}
-	
-
-}  );
+});
 
 
 $(canvas).mouseup(function() {
 	event.preventDefault();
-	switch(mode)
-	{
-	case "Wire Mode":
-		break;
-	case "Delete Mode":
-		break;
-	case "Add Mode":
+	var localX = getLocalX(event);
+	var localY = getLocalY(event);
 
-	
-		if (selection)
-		{
-			selection.setSelected(false);
-			selection = null;
-		}
-		break;
-	}
+	if (mode)
+		mode.mouseup(localX,localY,state);
 });
 
 imageManager.loadImages(["and.png","not.png","or.png","xor.png","nand.png"], function(result)
 {
 	gates.setImages(result);
-	obj.drawGate = function(name,x,y)
+	obj.addGate = function(name,x,y)
 	{
 		var gateObj = new gates.Gate(x,y,name);
 		state.currentGates.push(gateObj);
-		movableObjects.push(gateObj);
 		state.currentNodes = state.currentNodes.concat(gateObj.getNodes());
 		console.log(gateObj);
 
@@ -333,22 +120,11 @@ obj.canvasReady = function(funcToCall)
 		funcToCall();
 };
 
-obj.setWireMode = function(value)
-{
-	wireMode = value;
-};
 
 obj.addNode = function(x,y)
 {
 	var newNode = new wires.Node(x,y);
 	state.currentNodes.push(newNode);
-	movableObjects.push(newNode);
-
-};
-
-obj.setEraseMode = function(value)
-{
-	eraseMode = value;
 };
 
 obj.setMode = function(newMode)

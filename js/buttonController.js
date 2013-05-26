@@ -1,18 +1,21 @@
-define(["domReady!"],function(dom)
+define(["domReady!"],function()
 {
 	"use strict";
 
 	var obj = {};
 	var addGateCallbacks = [];
-	var wireModeCallbacks = [];
-	var eraseModeCallbacks = [];
 	var addNodeCallbacks = [];
-
 	var setModeCallbacks = [];
+
+
+	var lastMode;
+
 
 	$("#modeSelectorMenu li a").click(function()
 	{
+		console.log("clicked");
 		var mode = $(this).html();
+		lastMode = mode;
 		$("#modeSelectorText").html(mode);
 		console.log(mode);
 
@@ -21,6 +24,9 @@ define(["domReady!"],function(dom)
 			callback(mode);
 		});
 	});
+
+
+	$("#modeSelectorMenu li a:first").click();
 
 
 	$(".addGate").click(function (){
@@ -43,51 +49,23 @@ define(["domReady!"],function(dom)
 		
 	});
 
-	$(".wireMode").click(function (){
-		var current = $(this);
-
-		current.toggleClass("active");
-
-		wireModeCallbacks.forEach(function (callback)
-		{
-			callback(current.hasClass("active"));
-		});
-	});
-
-	$(".eraseMode").click(function (){
-		var current = $(this);
-
-		current.toggleClass("active");
-
-		eraseModeCallbacks.forEach(function (callback)
-		{
-			callback(current.hasClass("active"));
-		});
-	});
 
 	obj.onAddGate = function(callback)
 	{
 		addGateCallbacks.push(callback);
 	};
 
-	obj.onWireMode = function(callback)
-	{
-		wireModeCallbacks.push(callback);
-	};
-
 	obj.onAddNode = function(callback)
 	{
 		addNodeCallbacks.push(callback);
-	}
-
-	obj.onEraseMode = function(callback)
-	{
-		eraseModeCallbacks.push(callback);
 	};
 
 	obj.onSetMode = function(callback)
 	{
+
 		setModeCallbacks.push(callback);
+		callback(lastMode);
+
 	};
 
 	return obj;
