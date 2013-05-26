@@ -11,7 +11,7 @@ define(function()
 		urls.forEach(function(url)
 		{
 			var img = new Image();
-			img.src = "img/"+url;
+			img.src = "/static/img/"+url;
 			img.onload = function()
 			{
 				sum--;

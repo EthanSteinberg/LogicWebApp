@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Simple Logic Main</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" media="screen" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static',filename='css/canvas.css')}}">
+<link rel="shortcut icon" href="{{url_for('static',filename='img/favicon.ico')}}">
+<script src="{{url_for('static',filename='js/jquery.js')}}"></script>
+<script data-main="{{url_for('static',filename='js/main')}}" src="{{url_for('static',filename='js/require.js')}}"></script>
+</head>
+<body>
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="#">Simple Logic Examples </a>
+    <ul class="nav">
+      <li class="active"><a href="#"> Home </a></li>
+    </ul>
+  </div>
+</div>
+<div class="container">
+  <h1>Logic Gate Builder</h1>
+  <div class="btn-group">
+    <button id="modeSelectorButton" class="btn dropdown-toggle" data-toggle="dropdown"><span id="modeSelectorText"></span>
+    <span class="caret"></span>
+    </button>
+    <ul id="modeSelectorMenu" class="dropdown-menu">
+      <li><a href="#">Move Mode</a></li>
+      <li><a href="#">Wire Mode</a></li>
+      <li><a href="#">Delete Mode</a></li>
+    </ul>
+    <button class="btn addGate" data-type="and"> Add AND Gate </button>
+    <button class="btn addGate" data-type="or"> Add OR Gate </button>
+    <button class="btn addGate" data-type="not"> Add NOT Gate </button>
+    <button class="btn addGate" data-type="xor"> Add XOR Gate </button>
+    <button class="btn addGate" data-type="nand"> Add NAND Gate </button>
+    <button class="btn addNode"> Add Node</button>
+  </div>
+  <canvas id="mainCanvas" width=1000 height=700></canvas>
+</div>
+<!-- /container -->
+<script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>
+</body>
+</html>
