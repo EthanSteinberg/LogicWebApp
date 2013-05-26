@@ -5,7 +5,22 @@ define(["domReady!"],function(dom)
 	var obj = {};
 	var addGateCallbacks = [];
 	var wireModeCallbacks = [];
+	var eraseModeCallbacks = [];
 	var addNodeCallbacks = [];
+
+	var setModeCallbacks = [];
+
+	$("#modeSelectorMenu li a").click(function()
+	{
+		var mode = $(this).html();
+		$("#modeSelectorText").html(mode);
+		console.log(mode);
+
+		setModeCallbacks.forEach(function(callback)
+		{
+			callback(mode);
+		});
+	});
 
 
 	$(".addGate").click(function (){
@@ -39,6 +54,17 @@ define(["domReady!"],function(dom)
 		});
 	});
 
+	$(".eraseMode").click(function (){
+		var current = $(this);
+
+		current.toggleClass("active");
+
+		eraseModeCallbacks.forEach(function (callback)
+		{
+			callback(current.hasClass("active"));
+		});
+	});
+
 	obj.onAddGate = function(callback)
 	{
 		addGateCallbacks.push(callback);
@@ -53,6 +79,16 @@ define(["domReady!"],function(dom)
 	{
 		addNodeCallbacks.push(callback);
 	}
+
+	obj.onEraseMode = function(callback)
+	{
+		eraseModeCallbacks.push(callback);
+	};
+
+	obj.onSetMode = function(callback)
+	{
+		setModeCallbacks.push(callback);
+	};
 
 	return obj;
 

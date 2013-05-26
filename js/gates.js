@@ -12,22 +12,37 @@ define(["shapes","wires"],function(shapes,wires)
 		images = im;
 	};
 
+
+	
+
 	function Gate(x,y,type)
 	{
 		this.pos = new shapes.Position(x,y);
 		this.type = type;
 		this.rect = new shapes.Rect(this.pos,200,100);
 		this.selected = false;
-		this.inputNodes = convertRelativeToNodes(this.pos,this.getInputNodeOffsets());
-		this.outputNodes = convertRelativeToNodes(this.pos,this.getOutputNodeOffsets());
+		this.inputNodes = convertRelativeToNodes(this.pos,this.getInputNodeOffsets(),this);
+		this.outputNodes = convertRelativeToNodes(this.pos,this.getOutputNodeOffsets(),this);
 		this.nodes = this.inputNodes.concat(this.outputNodes);
 	}
 
-	function convertRelativeToNodes(pos,arr)
+	Gate.prototype.destroy = function(state)
+	{
+		this.nodes.forEach(function(node)
+		{
+			node.destroy(state);
+		});
+		state.currentGates.splice(state.currentGates.indexOf(this),1);
+	};
+
+	function convertRelativeToNodes(pos,arr,gate)
 	{
 		return arr.map(function(offset)
 		{
-			return new wires.Node(shapes.relativePosition(pos,offset[0],offset[1]));
+			var node = new wires.Node(shapes.relativePosition(pos,offset[0],offset[1]));
+			node.setGate(gate);
+			return node;
+ 
 		});
 	}
 

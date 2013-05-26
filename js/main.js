@@ -1,11 +1,14 @@
-define(["canvasWrapper","buttonController"],function(canvasWrapper,buttonController)
+define(["canvasWrapper","buttonController","modes"],function(canvasWrapper,buttonController,modes)
 {
 	"use strict";
 
 
 
+
 	canvasWrapper.canvasReady(function()
 	{
+
+
 		console.timeStamp("images loaded");
 		canvasWrapper.drawGate("and",0,0);
 
@@ -19,9 +22,19 @@ define(["canvasWrapper","buttonController"],function(canvasWrapper,buttonControl
 			canvasWrapper.setWireMode(value);
 		});
 
-		buttonController.onAddNode(function (value)
+		buttonController.onAddNode(function ()
 		{
 			canvasWrapper.addNode(20,20);
+		});
+
+		buttonController.onEraseMode(function (value)
+		{
+			canvasWrapper.setEraseMode(value);
+		});
+
+		buttonController.onSetMode(function (mode)
+		{
+			canvasWrapper.setMode(mode);
 		});
 		
 		

@@ -5,7 +5,7 @@ define(function()
 
 	function callOrReturnDirectly(a)
 	{
-		if (typeof(a) == "function")
+		if (typeof(a) === "function")
 		{
 			return a();
 		}
@@ -19,7 +19,7 @@ define(function()
 
 	obj.relativePosition = function(oldPos,xdif,ydif)
 	{
-		return new Position(function() { return oldPos.getX() + xdif}, function() { return oldPos.getY() + ydif});
+		return new Position(function() { return oldPos.getX() + xdif;}, function() { return oldPos.getY() + ydif;});
 	};
 
 	function Position(x,y)
@@ -82,6 +82,56 @@ define(function()
 	};
 
 	obj.Circle = Circle;
+
+	function Line(firstPosition,secondPosition,width)
+	{
+		this.firstPosition = firstPosition;
+		this.secondPosition = secondPosition;
+		this.width = width;
+	}
+
+	Line.prototype.contains = function(x,y)
+	{
+		var ax = this.firstPosition.getX();
+		var ay = this.firstPosition.getY();
+
+		var bx = this.secondPosition.getX();
+		var by = this.secondPosition.getY();
+
+		var abx = bx- ax;
+		var aby = by -ay;
+		var abNorm = Math.sqrt(abx*abx + aby*aby);
+		var abxNorm = abx/abNorm;
+		var abyNorm = aby/abNorm;
+
+
+
+		var acx = x-ax;
+		var acy = y-ay;
+
+		var length = acx * abxNorm + acy*abyNorm;
+		var yLength = acx * abyNorm + acy* -abxNorm;
+
+		//console.log(length,yLength,abNorm);
+		return (-this.width/2 <= length && length <= (abNorm + this.width/2) && -this.width/2 <= yLength && yLength <= this.width/2);
+	};
+
+	Line.prototype.draw = function(ctx)
+	{
+		ctx.beginPath();
+		ctx.lineCap = "round";
+		ctx.globalAlpha = 0.5;
+		ctx.lineWidth = this.width;
+		ctx.moveTo(this.firstPosition.getX(),this.firstPosition.getY());
+		ctx.lineTo(this.secondPosition.getX(),this.secondPosition.getY());
+		ctx.stroke();
+
+		ctx.lineCap = "butt";
+		ctx.lineWidth = 1;
+		ctx.globalAlpha = 1;
+	};
+
+	obj.Line = Line;
 
 	return obj;
 });
