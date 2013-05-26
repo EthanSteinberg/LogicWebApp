@@ -7,7 +7,10 @@ define(["shapes"],function(shapes)
 
 	function Node(x,y)
 	{
-		this.pos = new shapes.Position(x,y);
+		if (y === undefined)
+			this.pos = x;
+		else
+			this.pos = new shapes.Position(x,y);
 		this.circle = new shapes.Circle(this.pos,20);
 		this.selcted = false;
 	}
@@ -30,12 +33,12 @@ define(["shapes"],function(shapes)
 
 	Node.prototype.getX = function()
 	{
-		return this.pos.x;
+		return this.pos.getX();
 	};
 
 	Node.prototype.getY = function()
 	{
-		return this.pos.y;
+		return this.pos.getY();
 	};
 
 	Node.prototype.setSelected = function(value)
@@ -57,6 +60,26 @@ define(["shapes"],function(shapes)
 		this.startNode = startNode;
 		this.stopNode = stopNode;
 	}
+
+
+	Wire.prototype.draw = function(ctx)
+	{
+		
+
+		
+		ctx.beginPath();
+		ctx.lineCap = "round";
+		ctx.globalAlpha = 0.5;
+		ctx.lineWidth = 30;
+		ctx.moveTo(this.startNode.getX(),this.startNode.getY());
+		ctx.lineTo(this.stopNode.getX(),this.stopNode.getY());
+		ctx.stroke();
+
+		ctx.lineCap = "butt";
+		ctx.lineWidth = 1;
+		ctx.globalAlpha = 1;
+		
+	};
 
 	obj.Wire = Wire;
 

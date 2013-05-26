@@ -1,9 +1,10 @@
-define(["shapes"],function(shapes)
+define(["shapes","wires"],function(shapes,wires)
 {
 	"use strict";
 
 	var obj = {};
 	var images;
+
 
 
 	obj.setImages = function(im)
@@ -17,9 +18,31 @@ define(["shapes"],function(shapes)
 		this.type = type;
 		this.rect = new shapes.Rect(this.pos,200,100);
 		this.selected = false;
-		this.output = new shapes.Circle(shapes.relativePosition(this.pos,200,50),20);
 
 	}
+
+	function convertRelativeToNodes(pos,arr)
+	{
+		return arr.map(function(offset)
+		{
+			return new wires.Node(shapes.relativePosition(pos,offset[0],offset[1]));
+		});
+	}
+
+	Gate.prototype.getNodeOffsets = function()
+	{
+		switch(this.type)
+		{
+			case "and":
+				return [ [200,50], [0,30], [0,70]];
+
+		}
+	};
+
+	Gate.prototype.getNodes = function()
+	{
+		return convertRelativeToNodes(this.pos,this.getNodeOffsets());
+	};
 
 	Gate.prototype.setSelected = function(status)
 	{
@@ -46,14 +69,6 @@ define(["shapes"],function(shapes)
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "black";
 
-		
-
-		if (this.outputSelected)
-		{
-			ctx.strokeStyle = "green";
-		}
-		this.output.draw(ctx);
-		ctx.strokeStyle = "black";
 				
 	};
 
