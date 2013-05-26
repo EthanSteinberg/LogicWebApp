@@ -2,41 +2,42 @@ define(function()
 {
 	"use strict";
 
-
-	function callOrReturnDirectly(a)
-	{
-		if (typeof(a) === "function")
-		{
-			return a();
-		}
-		else
-		{
-			return a;
-		}
-	}
-
 	var obj = {};
+
+	obj.allPositions = [];
 
 	obj.relativePosition = function(oldPos,xdif,ydif)
 	{
-		return new Position(function() { return oldPos.getX() + xdif;}, function() { return oldPos.getY() + ydif;});
+		return new Position(xdif,ydif,oldPos);
 	};
 
-	function Position(x,y)
+
+	function Position(x,y,oldPos)
 	{
 		this.x = x;
 		this.y = y;
+
+		this.oldPos = oldPos;
+		this.id = obj.allPositions.length;
+		obj.allPositions.push(this);
 	}
+
 
 	Position.prototype.getX = function()
 	{
-		return callOrReturnDirectly(this.x);
+		if (this.oldPos)
+			return this.x + this.oldPos.getX();
+		else
+			return this.x;
 
 	};
 
 	Position.prototype.getY = function()
 	{
-		return callOrReturnDirectly(this.y);
+		if (this.oldPos)
+			return this.y + this.oldPos.getY();
+		else
+			return this.y;
 	};
 
 	obj.Position = Position;

@@ -44,7 +44,8 @@ define(function()
 			}
 		},this);
 
-		this.selection.setSelected(true);
+		if (this.selection)
+			this.selection.setSelected(true);
 	};
 
 	DeleteMode.prototype.mousedown = function(x,y,state)

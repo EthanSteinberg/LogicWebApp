@@ -13,11 +13,9 @@ define(["domReady!"],function()
 
 	$("#modeSelectorMenu li a").click(function()
 	{
-		console.log("clicked");
 		var mode = $(this).html();
 		lastMode = mode;
 		$("#modeSelectorText").html(mode);
-		console.log(mode);
 
 		setModeCallbacks.forEach(function(callback)
 		{

@@ -20,6 +20,8 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 		"currentNodes": []
 	};
 
+	window.state = state;
+
 	var mode = null;
 
 	function getLocalX(event)
@@ -36,8 +38,7 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 		event.preventDefault();
 		var localX = getLocalX(event);
 		var localY = getLocalY(event);
-		if (mode)
-			mode.mousedown(localX,localY,state);
+		mode.mousedown(localX,localY,state);
 	});
 
 
@@ -47,20 +48,27 @@ $(canvas).mousemove(function(event){
 
 	var localX = getLocalX(event);
 	var localY = getLocalY(event);
-
-	if (mode)
-		mode.mousemove(localX,localY,state);
+	mode.mousemove(localX,localY,state);
 
 });
 
+
+$(canvas).mouseleave(function(event)
+{
+	event.preventDefault();
+
+	var localX = getLocalX(event);
+	var localY = getLocalY(event);
+
+	mode.mouseup(localX,localY,state);
+});
 
 $(canvas).mouseup(function() {
 	event.preventDefault();
 	var localX = getLocalX(event);
 	var localY = getLocalY(event);
 
-	if (mode)
-		mode.mouseup(localX,localY,state);
+	mode.mouseup(localX,localY,state);
 });
 
 imageManager.loadImages(["and.png","not.png","or.png","xor.png","nand.png"], function(result)
