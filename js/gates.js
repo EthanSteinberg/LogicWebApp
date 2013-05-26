@@ -18,7 +18,9 @@ define(["shapes","wires"],function(shapes,wires)
 		this.type = type;
 		this.rect = new shapes.Rect(this.pos,200,100);
 		this.selected = false;
-
+		this.inputNodes = convertRelativeToNodes(this.pos,this.getInputNodeOffsets());
+		this.outputNodes = convertRelativeToNodes(this.pos,this.getOutputNodeOffsets());
+		this.nodes = this.inputNodes.concat(this.outputNodes);
 	}
 
 	function convertRelativeToNodes(pos,arr)
@@ -29,19 +31,39 @@ define(["shapes","wires"],function(shapes,wires)
 		});
 	}
 
-	Gate.prototype.getNodeOffsets = function()
+	Gate.prototype.getInputNodeOffsets = function()
 	{
 		switch(this.type)
 		{
 			case "and":
-				return [ [200,50], [0,30], [0,70]];
+			case "xor":
+			case "or":
+			case "nand":
+				return [[0,30], [0,70]];
+
+			case "not":
+				return [ [0,50]];
+
+		}
+	};
+
+	Gate.prototype.getOutputNodeOffsets = function()
+	{
+		switch(this.type)
+		{
+			case "and":
+			case "xor":
+			case "or":
+			case "nand":
+			case "not":
+				return [ [200,50]];
 
 		}
 	};
 
 	Gate.prototype.getNodes = function()
 	{
-		return convertRelativeToNodes(this.pos,this.getNodeOffsets());
+		return this.nodes;
 	};
 
 	Gate.prototype.setSelected = function(status)
