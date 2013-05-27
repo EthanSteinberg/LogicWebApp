@@ -73,7 +73,7 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 		mode.mouseup(localX,localY,state);
 	});
 
-	$(canvas).mouseup(function() {
+	$(canvas).mouseup(function(event) {
 		event.preventDefault();
 		var localX = getLocalX(event);
 		var localY = getLocalY(event);
