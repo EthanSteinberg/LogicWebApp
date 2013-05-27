@@ -119,6 +119,11 @@ define(["shapes"],function(shapes)
 		this.selected = value;
 	}
 
+	Wire.prototype.setActivated = function(value)
+	{
+		this.activated = value;
+	}
+
 	Wire.prototype.contains = function(x,y)
 	{
 
@@ -137,6 +142,8 @@ define(["shapes"],function(shapes)
 	{
 		
 		if (this.selected)
+			ctx.strokeStyle = "green";
+		else if (this.activated)
 			ctx.strokeStyle = "green";
 
 		this.line.draw(ctx);

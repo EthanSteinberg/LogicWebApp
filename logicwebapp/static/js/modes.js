@@ -1,4 +1,4 @@
-define(["moveMode","wireMode","deleteMode"],function(moveMode,wireMode,deleteMode)
+define(["moveMode","wireMode","deleteMode","viewerMode"],function(moveMode,wireMode,deleteMode,viewerMode)
 {
 	"use strict";
 
@@ -7,7 +7,8 @@ define(["moveMode","wireMode","deleteMode"],function(moveMode,wireMode,deleteMod
 	var map = {
 		"Move Mode": moveMode.MoveMode,
 		"Wire Mode": wireMode.WireMode,
-		"Delete Mode": deleteMode.DeleteMode
+		"Delete Mode": deleteMode.DeleteMode,
+		"Viewer Mode": viewerMode.ViewerMode
 	};
 
 	obj.getMode = function(modeName)

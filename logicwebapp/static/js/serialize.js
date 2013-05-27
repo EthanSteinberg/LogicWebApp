@@ -62,9 +62,10 @@ define(["shapes","wires","gates"],function(shapes,wires,gates)
 			else
 				return value;
 		});
-
-		relinkState(state);
+		
 		relinkPrototpye(state);
+		relinkState(state);
+		
 
 		shapes.allPositions = state.currentPositions;
 

@@ -17,6 +17,7 @@ define(["shapes","wires"],function(shapes,wires)
 
 	function Gate(x,y,type)
 	{
+		this.activated = false;
 		this.pos = new shapes.Position(x,y);
 		this.type = type;
 		this.rect = new shapes.Rect(shapes.relativePosition(this.pos,0,0),200,100);
@@ -46,6 +47,16 @@ define(["shapes","wires"],function(shapes,wires)
 		});
 	}
 
+	Gate.prototype.getActivated = function()
+	{
+		return this.activated;
+	};
+
+	Gate.prototype.setActivated = function(status)
+	{
+		this.activated = status;
+	};
+
 	Gate.prototype.getInputNodeOffsets = function()
 	{
 		switch(this.type)
@@ -57,7 +68,11 @@ define(["shapes","wires"],function(shapes,wires)
 				return [[0,30], [0,70]];
 
 			case "not":
+			case "out":
 				return [ [0,50]];
+
+			case "in":
+				return [];
 
 		}
 	};
@@ -71,7 +86,11 @@ define(["shapes","wires"],function(shapes,wires)
 			case "or":
 			case "nand":
 			case "not":
+			case "in":
 				return [ [200,50]];
+
+			case "out":
+				return [];
 
 		}
 	};
@@ -94,7 +113,13 @@ define(["shapes","wires"],function(shapes,wires)
 
 	Gate.prototype.draw = function(ctx)
 	{
-		ctx.drawImage(images[this.type+".png"],this.pos.getX(),this.pos.getY());
+		if (this.activated &&  ( this.type === "in" || this.type == "out"))
+		{
+			ctx.drawImage(images[this.type+"-on.png"],this.pos.getX(),this.pos.getY());
+		}
+			
+		else
+			ctx.drawImage(images[this.type+".png"],this.pos.getX(),this.pos.getY());
 
 		if (this.selected)
 		{

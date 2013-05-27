@@ -14,7 +14,14 @@ Builder
 
 
 {% block content %}
-<h1>Logic Gate Builder</h1>
+<div class="row-fluid">
+<h1 class="span10">Logic Gate Builder</h1>
+<div class="btn-group span2">
+  <button class="btn open"> Open</button>
+  <button class="btn save"> Save </button>
+  </div>
+</div>
+
   <div class="btn-group">
     <button id="modeSelectorButton" class="btn dropdown-toggle" data-toggle="dropdown"><span id="modeSelectorText"></span>
     <span class="caret"></span>
@@ -29,14 +36,13 @@ Builder
     <button class="btn addGate" data-type="not"> Add NOT Gate </button>
     <button class="btn addGate" data-type="xor"> Add XOR Gate </button>
     <button class="btn addGate" data-type="nand"> Add NAND Gate </button>
+    <button class="btn addGate" data-type="in"> Add In Gate </button>
+    <button class="btn addGate" data-type="out"> Add Out Gate </button>
     <button class="btn addNode"> Add Node</button>
 
   </div>
 
-  <div class="btn-group">
-  <button class="btn open"> Open</button>
-  <button class="btn save"> Save </button>
-  </div>
+  
   <canvas id="mainCanvas" width=1000 height=700></canvas>
 
   <div id="saveModal" class="modal hide fade">

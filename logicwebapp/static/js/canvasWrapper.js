@@ -81,7 +81,7 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 		mode.mouseup(localX,localY,state);
 	});
 
-	imageManager.loadImages(["and.png","not.png","or.png","xor.png","nand.png"], function(result)
+	imageManager.loadImages(["and.png","not.png","or.png","xor.png","nand.png","in.png","out.png","in-on.png","out-on.png"], function(result)
 	{
 		gates.setImages(result);
 		obj.addGate = function(name,x,y)

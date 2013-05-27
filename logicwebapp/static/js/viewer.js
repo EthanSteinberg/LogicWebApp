@@ -3,43 +3,20 @@ define(["canvasWrapper","buttonController","modes","serialize"],function(canvasW
 	"use strict";
 
 
-	buttonController.onSetMode(function (mode)
-	{
-		canvasWrapper.setMode(modes.getMode(mode));
-	});
 
-
+	
+	
+	var newMode = modes.getMode("Viewer Mode");
+	newMode.setState(canvasWrapper.getState());
+	canvasWrapper.setMode(newMode);
 	canvasWrapper.canvasReady(function()
 	{
 
 
 		console.timeStamp("images loaded");
-
-		buttonController.onAddGate(function (gate)
-		{
-			canvasWrapper.addGate(gate,0,0);
-		});
+		
 
 
-		buttonController.onAddNode(function ()
-		{
-			canvasWrapper.addNode(20,20);
-		});
-
-
-		buttonController.onSaveButton(function ()
-		{
-			var result = serialize.serialize(canvasWrapper.getState());
-			$.ajax({
-				type: "POST",
-				url: "/save",
-				data: { chipToSave: result}
-			}).done(function( msg ) {
-				$("#resultOfSave").html(msg);
-				$("#saveModal").modal("show");
-			});
-
-		});
 
 		$("#openButton").click(function()
 		{
@@ -61,7 +38,9 @@ define(["canvasWrapper","buttonController","modes","serialize"],function(canvasW
 					$("#openModal").modal("hide");
 					var st = serialize.deserialize(msg,result);
 					canvasWrapper.setState(st);
-					$("#modeSelectorMenu li a:first").click();
+					var newMode = modes.getMode("Viewer Mode");
+					newMode.setState(canvasWrapper.getState());
+					canvasWrapper.setMode(newMode);
 				}
 				
 			});
