@@ -1,0 +1,6 @@
+CREATE TABLE designs
+(
+	id INTEGER PRIMARY KEY,
+	jsonStorage TEXT NOT NULL
+);
+

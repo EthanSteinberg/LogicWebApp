@@ -6,7 +6,8 @@ define(["domReady!"],function()
 	var addGateCallbacks = [];
 	var addNodeCallbacks = [];
 	var setModeCallbacks = [];
-
+	var saveButtonCallbacks = [];
+	var openButtonCallbacks = [];
 
 	var lastMode;
 
@@ -47,6 +48,24 @@ define(["domReady!"],function()
 		
 	});
 
+	$(".save").click(function (){
+
+		saveButtonCallbacks.forEach(function(callback)
+		{
+			callback();
+		});
+		
+	});
+
+	$(".open").click(function (){
+
+		openButtonCallbacks.forEach(function(callback)
+		{
+			callback();
+		});
+		
+	});
+
 
 	obj.onAddGate = function(callback)
 	{
@@ -64,6 +83,16 @@ define(["domReady!"],function()
 		setModeCallbacks.push(callback);
 		callback(lastMode);
 
+	};
+
+	obj.onSaveButton = function(callback)
+	{
+		saveButtonCallbacks.push(callback);
+	};
+
+	obj.onOpenButton = function(callback)
+	{
+		openButtonCallbacks.push(callback);
 	};
 
 	return obj;

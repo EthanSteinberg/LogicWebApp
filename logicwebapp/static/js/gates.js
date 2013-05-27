@@ -19,7 +19,7 @@ define(["shapes","wires"],function(shapes,wires)
 	{
 		this.pos = new shapes.Position(x,y);
 		this.type = type;
-		this.rect = new shapes.Rect(this.pos,200,100);
+		this.rect = new shapes.Rect(shapes.relativePosition(this.pos,0,0),200,100);
 		this.selected = false;
 		this.inputNodes = convertRelativeToNodes(this.pos,this.getInputNodeOffsets(),this);
 		this.outputNodes = convertRelativeToNodes(this.pos,this.getOutputNodeOffsets(),this);
