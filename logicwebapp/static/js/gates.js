@@ -123,7 +123,7 @@ define(["shapes","wires"],function(shapes,wires)
 
 		if (this.selected)
 		{
-			ctx.strokeStyle = "green";
+			ctx.strokeStyle = "yellow";
 		}
 
 		ctx.lineWidth = 3;

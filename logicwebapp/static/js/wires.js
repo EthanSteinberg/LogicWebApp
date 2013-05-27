@@ -44,7 +44,7 @@ define(["shapes"],function(shapes)
 	Node.prototype.draw = function(ctx)
 	{
 		if (this.selcted)
-			ctx.strokeStyle = "green";
+			ctx.strokeStyle = "yellow";
 
 		ctx.lineWidth = 3;
 		this.circle.draw(ctx);
@@ -141,10 +141,13 @@ define(["shapes"],function(shapes)
 	Wire.prototype.draw = function(ctx)
 	{
 		
+		if (this.activated)
+			ctx.strokeStyle = "green";
+		else
+			ctx.strokeStyle = "red";
+
 		if (this.selected)
-			ctx.strokeStyle = "green";
-		else if (this.activated)
-			ctx.strokeStyle = "green";
+			ctx.strokeStyle = "yellow";
 
 		this.line.draw(ctx);
 		ctx.strokeStyle = "black";

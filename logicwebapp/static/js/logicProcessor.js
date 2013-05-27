@@ -79,12 +79,31 @@ define(function()
 				break;
 
 			case "not":
-				setGateStatus(gate.outputGroups[0],gate,!gate.inputGroups[0]);
+				this.setGateStatus(gate.outputGroups[0],gate,!statusForGroups[gate.inputGroups[0]]);
 				break;
 
+			case "nand":
+				this.setGateStatus(gate.outputGroups[0],gate,!(statusForGroups[gate.inputGroups[0]] && statusForGroups[gate.inputGroups[1]]));
+				break;
+
+			case "and":
+				this.setGateStatus(gate.outputGroups[0],gate,statusForGroups[gate.inputGroups[0]] && statusForGroups[gate.inputGroups[1]]);
+				break;
+
+			case "or":
+				this.setGateStatus(gate.outputGroups[0],gate,statusForGroups[gate.inputGroups[0]] || statusForGroups[gate.inputGroups[1]]);
+				break;
+
+			case "xor"
+				this.setGateStatus(gate.outputGroups[0],gate,statusForGroups[gate.inputGroups[0]] != statusForGroups[gate.inputGroups[1]]);
+				break;
+
+
+			default:
+				console.error("Gate could not be processed",gate.type,gate);
+				debugger; // Gate not processed
 		}
-		console.error("Gate could not be processed",gate.type,gate);
-		debugger; // Gate not processed
+		
 	};
 
 
@@ -102,6 +121,11 @@ define(function()
 
 	LogicProcessor.prototype.setGateStatus = function(outputGroup,gate,status)
 	{
+
+		if (status === statusForGroups[outputGroup])
+		{
+			return;
+		}
 
 		wiresForGroup[outputGroup].forEach(function (wire)
 		{
