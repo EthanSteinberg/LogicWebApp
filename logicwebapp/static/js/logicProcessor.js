@@ -94,7 +94,7 @@ define(function()
 				this.setGateStatus(gate.outputGroups[0],gate,statusForGroups[gate.inputGroups[0]] || statusForGroups[gate.inputGroups[1]]);
 				break;
 
-			case "xor"
+			case "xor":
 				this.setGateStatus(gate.outputGroups[0],gate,statusForGroups[gate.inputGroups[0]] != statusForGroups[gate.inputGroups[1]]);
 				break;
 
