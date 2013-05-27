@@ -1,0 +1,40 @@
+{%- from 'macros.html' import navlink,navitem, script,stylesheet, scriptMain with context-%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>{% block title %} {% endblock %} </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="{{url_for('static',filename='img/favicon.ico')}}">
+
+{{ stylesheet('css/bootstrap.min.css') }}
+
+{% block css %}
+{% endblock %}
+
+
+{{ script('js/jquery.js') }}
+
+{% block script %}
+{% endblock %}
+
+</head>
+<body>
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="#">Simple Logic Examples </a>
+    <ul class="nav">
+      {{ navlink('index','Home') }}
+      {{ navlink('builder','Builder') }}
+    </ul>
+  </div>
+</div>
+<div class="container">
+
+  {% block content %}
+  {% endblock %}
+  
+</div>
+
+{{ script('js/bootstrap.min.js') }}
+</body>
+</html>

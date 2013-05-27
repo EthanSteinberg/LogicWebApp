@@ -1,0 +1,22 @@
+
+
+
+{% macro navlink(endpoint,text) %}
+{%- if request.endpoint.endswith(endpoint) %}
+<li class='active'><a href='#'>{{icon|safe}}{{text}}</a></li>
+{% else %}
+<li><a href='{{url_for(endpoint)}}'>{{icon|safe}}{{text}}</a></li>
+{%- endif %}
+{% endmacro %} <!-- from Anthony Ford -->
+
+{% macro script(filename) %}
+<script type='text/javascript' src='{{url_for('static',filename=filename)}}'></script>
+{% endmacro %}
+
+{% macro stylesheet(filename) %}
+<link href='{{url_for('static',filename=filename)}}' rel='stylesheet'>
+{% endmacro %}
+
+{% macro scriptMain(filename) %}
+<script data-main="{{url_for('static',filename=filename)}}" src="{{url_for('static',filename='js/require.js')}}"></script>
+{% endmacro %}
