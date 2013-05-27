@@ -5,6 +5,7 @@ define(["canvasWrapper","buttonController","modes","serialize"],function(canvasW
 
 
 	
+
 	
 	var newMode = modes.getMode("Viewer Mode");
 	newMode.setState(canvasWrapper.getState());
@@ -15,6 +16,17 @@ define(["canvasWrapper","buttonController","modes","serialize"],function(canvasW
 
 		console.timeStamp("images loaded");
 		
+
+		if ($("#alreadyOpen").html() !== "")
+		{
+			var msg = $("#alreadyOpen").html();
+			var result = JSON.parse(msg);
+			var st = serialize.deserialize(msg,result);
+			canvasWrapper.setState(st);
+			var newMode = modes.getMode("Viewer Mode");
+			newMode.setState(canvasWrapper.getState());
+			canvasWrapper.setMode(newMode);
+		}
 
 
 

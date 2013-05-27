@@ -8,13 +8,17 @@ from contextlib import closing
 def index():
 	return render_template("index.html")
 
-@app.route("/builder")
+@app.route("/builder/")
 def builder():
 	return render_template("builder.html")
 
-@app.route("/viewer")
+@app.route("/viewer/")
 def viewer():
 	return render_template("viewer.html")
+
+@app.route("/viewer/<designid>")
+def viewAlreadyOpen(designid):
+	return render_template("viewer.html",state=open(designid))
 
 @app.route("/save", methods=['POST'])
 def save():
