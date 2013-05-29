@@ -19,7 +19,7 @@ define(["canvasWrapper","buttonController","modes","serialize"],function(canvasW
 
 		if ($("#alreadyOpen").html() !== "")
 		{
-			var msg = $("#alreadyOpen").html();
+			var msg = $("#alreadyOpen").text();
 			var result = JSON.parse(msg);
 			var st = serialize.deserialize(msg,result);
 			canvasWrapper.setState(st);

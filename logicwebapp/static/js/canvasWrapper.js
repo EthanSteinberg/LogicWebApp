@@ -93,23 +93,32 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 
 		};
 
+		function reverseIterate(arr,func)
+		{
+			for (var i = arr.length-1; i >= 0 ; i--)
+			{
+				func(arr[i]);
+			}
+		}
+
 		function animate()
 		{
 			ctx.clearRect(0,0,canvas.width,canvas.height);
 
-			state.currentGates.forEach(function(gate)
+			reverseIterate(state.currentGates,function(gate) 
 			{
 				gate.draw(ctx);
 
 			});
 
-			state.currentNodes.forEach(function(node)
+			reverseIterate(state.currentNodes,function(node)
 			{
-				node.draw(ctx);
+				if (!node.hasGate())
+					node.draw(ctx);
 
 			});
 
-			state.currentWires.forEach(function(wire)
+			reverseIterate(state.currentWires,function(wire)
 			{
 				wire.draw(ctx);
 

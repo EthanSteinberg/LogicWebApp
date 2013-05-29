@@ -131,6 +131,11 @@ define(["shapes","wires"],function(shapes,wires)
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "black";
 
+		this.nodes.forEach(function (node)
+		{
+			node.draw(ctx);
+		});
+
 				
 	};
 
