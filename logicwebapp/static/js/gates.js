@@ -1,4 +1,4 @@
-define(["shapes","wires"],function(shapes,wires)
+define(["shapes","wires","logicProcessor"],function(shapes,wires,logicProcessor)
 {
 	"use strict";
 
@@ -15,16 +15,39 @@ define(["shapes","wires"],function(shapes,wires)
 
 	
 
-	function Gate(x,y,type)
+	function Gate(x,y,type,gateState,name,id)
 	{
 		this.activated = false;
 		this.pos = new shapes.Position(x,y);
 		this.type = type;
-		this.rect = new shapes.Rect(shapes.relativePosition(this.pos,0,0),200,100);
+
+		this.yValue = this.pos.y;
+		
 		this.selected = false;
+		
+
+		if (type === "composite")
+		{
+			this.logic = new logicProcessor.LogicProcessor(gateState);
+			this.name = name;
+			this.sourceId = id;
+		}
+
 		this.inputNodes = convertRelativeToNodes(this.pos,this.getInputNodeOffsets(),this);
 		this.outputNodes = convertRelativeToNodes(this.pos,this.getOutputNodeOffsets(),this);
 		this.nodes = this.inputNodes.concat(this.outputNodes);
+
+		if (type === "composite")
+		{
+			var maxWidth = Math.max(this.inputNodes.length,this.outputNodes.length);
+			this.rect = new shapes.Rect(shapes.relativePosition(this.pos,0,0),200,maxWidth*50);
+		}
+		else
+		{
+			this.rect = new shapes.Rect(shapes.relativePosition(this.pos,0,0),200,100);
+		}
+
+
 	}
 
 	Gate.prototype.destroy = function(state)
@@ -74,6 +97,17 @@ define(["shapes","wires"],function(shapes,wires)
 			case "in":
 				return [];
 
+			case "composite":
+				var result = [];
+				for (var i = 0; i < this.logic.getInputNodes(); i++)
+				{
+					result.push([0,25+i*50]);
+				}
+				return result;
+
+			default:
+				debugger;
+
 		}
 	};
 
@@ -92,6 +126,17 @@ define(["shapes","wires"],function(shapes,wires)
 			case "out":
 				return [];
 
+			case "composite":
+				var result = [];
+				for (var i = 0; i < this.logic.getOutputNodes(); i++)
+				{
+					result.push([200,25+i*50]);
+				}
+				return result;
+
+			default:
+				debugger;
+
 		}
 	};
 
@@ -109,15 +154,22 @@ define(["shapes","wires"],function(shapes,wires)
 	{
 		this.pos.x = x;
 		this.pos.y = y;
+		this.yValue = this.pos.y;
 	};
 
 	Gate.prototype.draw = function(ctx)
 	{
-		if (this.activated &&  ( this.type === "in" || this.type == "out"))
+		if (this.activated &&  ( this.type === "in" || this.type === "out"))
 		{
 			ctx.drawImage(images[this.type+"-on.png"],this.pos.getX(),this.pos.getY());
 		}
 			
+		else if (this.type === "composite")
+		{
+			ctx.font = "20px sans-serif";
+			ctx.fillText(this.name,this.pos.getX()+50,this.pos.getY()+this.rect.height/2);
+		}
+
 		else
 			ctx.drawImage(images[this.type+".png"],this.pos.getX(),this.pos.getY());
 

@@ -19,6 +19,7 @@ Builder
 <div class="btn-group span2">
   <button class="btn open"> Open</button>
   <button class="btn save"> Save </button>
+  <button class="btn add"> Add Inner Gate </button>
   </div>
 </div>
 
@@ -65,12 +66,32 @@ Builder
   <div class="modal-body">
     <p>What is the ID of the design you want to open?</p>
     <input type="number" id="oldDesignId"/>
-    <p id="openErrors"> </p>
+    <p class="openErrors"> </p>
   </div>
   <div class="modal-footer">
   	
     <a href="#" data-dismiss="modal" aria-hidden="true" class="btn">Close</a>
     <a href="#" id="openButton" class="btn btn-primary">Open</a>
+  </div>
+</div>
+
+<div id="addModal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Add</h3>
+  </div>
+  <div class="modal-body">
+    <p>What is the ID of the design you want to add?</p>
+    <input type="number" id="addDesignId"/>
+    <p>What is the name of the design you want to add?</p>
+    <input type="text" id="addDesignName"/>
+    <p class="openErrors"> </p>
+    <p class="openErrors"> </p>
+  </div>
+  <div class="modal-footer">
+    
+    <a href="#" data-dismiss="modal" aria-hidden="true" class="btn">Close</a>
+    <a href="#" id="addButton" class="btn btn-primary">Add</a>
   </div>
 </div>
   {% endblock %}

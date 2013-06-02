@@ -1,4 +1,4 @@
-define(["shapes","wires","gates"],function(shapes,wires,gates)
+define(["shapes","wires","gates","logicProcessor"],function(shapes,wires,gates,logicProcessor)
 {
 	"use strict";
 
@@ -16,17 +16,17 @@ define(["shapes","wires","gates"],function(shapes,wires,gates)
 	function mapId(array)
 	{
 		return array.map(function (o)
-			{
-				return o.id;
-			});
+		{
+			return o.id;
+		});
 	}
 
 	function unmapId(array,source)
 	{
 		return array.map(function (o)
-			{
-				return source[o];
-			});
+		{
+			return source[o];
+		});
 	}
 
 
@@ -47,7 +47,7 @@ define(["shapes","wires","gates"],function(shapes,wires,gates)
 
 		var state = JSON.parse(message,function(key,value)
 		{
-			if (key === "pos" || key === "firstPosition" || key === "secondPosition")
+			if (key === "pos" || key === "firstPosition" || key === "secondPosition" || key === "oldPos")
 			{
 				return json.currentPositions[value];
 			}
@@ -59,15 +59,24 @@ define(["shapes","wires","gates"],function(shapes,wires,gates)
 				return $.extend(Object.create(shapes.Circle.prototype),value);
 			else if (key === "line")
 				return $.extend(Object.create(shapes.Line.prototype),value);
+			else if (key === "logic")
+			{
+				var l =  $.extend(Object.create(logicProcessor.LogicProcessor.prototype),value);
+				l.setInputAndOutput();
+				return l;
+			}
+
 			else
 				return value;
 		});
 		
+		state.currentPositions = json.currentPositions;
+
 		relinkPrototpye(state);
 		relinkState(state);
 		
 
-		shapes.allPositions = state.currentPositions;
+		
 
 		console.log(state);
 
@@ -107,6 +116,7 @@ define(["shapes","wires","gates"],function(shapes,wires,gates)
 			gate.nodes = unmapId(gate.nodes,state.currentNodes);
 			gate.inputNodes = unmapId(gate.inputNodes,state.currentNodes);
 			gate.outputNodes = unmapId(gate.outputNodes,state.currentNodes);
+
 		});
 
 		state.currentWires.forEach(function (wire)
@@ -118,7 +128,6 @@ define(["shapes","wires","gates"],function(shapes,wires,gates)
 
 	obj.serialize = function(state)
 	{
-
 
 		giveId(state.currentNodes);
 		giveId(state.currentGates);
@@ -139,6 +148,35 @@ define(["shapes","wires","gates"],function(shapes,wires,gates)
 			gate.nodes = mapId(gate.nodes);
 			gate.inputNodes = mapId(gate.inputNodes);
 			gate.outputNodes = mapId(gate.outputNodes);
+
+			if (gate.logic)
+			{
+
+
+				console.log(gate.logic);
+				var newLogic = {
+
+					gates:
+					gate.logic.gates.map(function (gate)
+					{
+						return {inputGroups: gate.inputGroups, outputGroups: gate.outputGroups,type : gate.type, yValue: gate.yValue};
+					}),
+					statusForGroups : gate.logic.statusForGroups,
+					wiresForGroup : gate.logic.wiresForGroup.map(function () {return [];})
+
+
+
+
+
+
+
+				};
+
+
+				console.log(newLogic);
+
+				gate.logic = newLogic;
+			}
 		});
 
 		state.currentWires.forEach(function (wire)

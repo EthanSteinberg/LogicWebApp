@@ -5,10 +5,49 @@ define(function()
 
 	var obj = {};
 
-	var wiresForGroup = {};
-	var statusForGroups = {};
+	
 
-	function floodFillRecurse(currentNode,currentGroup)
+
+	function LogicProcessor(state)
+	{
+		this.wiresForGroup = [];
+		this.statusForGroups = {};
+		
+
+		this.floodFill(state.currentNodes);
+		setGroupsForGates(state.currentGates);
+
+
+
+
+		this.gates = state.currentGates;
+		this.gates.sort(function (a,b)
+		{
+
+			return a.yValue - b.yValue;
+		});
+		this.setInputAndOutput();
+		console.log(state);
+
+	}
+
+
+
+	LogicProcessor.prototype.setInputAndOutput = function()
+	{
+		this.inputGates = this.gates.filter(function (gate)
+		{
+			return gate.type === "in";
+		});
+
+		this.outputGates = this.gates.filter(function (gate)
+		{
+			return gate.type === "out";
+		});
+	}
+
+
+	LogicProcessor.prototype.floodFillRecurse = function (currentNode,currentGroup)
 	{
 		if (currentNode.group === currentGroup)
 			return;
@@ -17,26 +56,26 @@ define(function()
 
 		currentNode.wires.forEach(function (wire)
 		{
-			wiresForGroup[currentGroup].push(wire);
-			floodFillRecurse(wire.startNode,currentGroup);
-			floodFillRecurse(wire.stopNode,currentGroup);
-		});
+			this.wiresForGroup[currentGroup].push(wire);
+			this.floodFillRecurse(wire.startNode,currentGroup);
+			this.floodFillRecurse(wire.stopNode,currentGroup);
+		},this);
 
-	}
+	};
 
-	function floodFill(nodes)
+	LogicProcessor.prototype.floodFill = function (nodes)
 	{
 		var lastGroup = 1;
 		nodes.forEach(function(node)
 		{
 			if (node.group === undefined)
 			{
-				wiresForGroup[lastGroup] = [];
-				statusForGroups[lastGroup] = false;
-				floodFillRecurse(node,lastGroup++);
+				this.wiresForGroup[lastGroup] = [];
+				this.statusForGroups[lastGroup] = false;
+				this.floodFillRecurse(node,lastGroup++);
 			}
-		});
-	}
+		},this);
+	};
 
 	function setGroupsForGates(gates)
 	{
@@ -58,46 +97,61 @@ define(function()
 
 	}
 
-
-	function LogicProcessor(state)
+	LogicProcessor.prototype.getInputNodes = function(gate)
 	{
-		
+		return this.inputGates.length;
+	};
 
-		floodFill(state.currentNodes);
-		setGroupsForGates(state.currentGates);
-
-		this.gates = state.currentGates;
-		console.log(state);
-	}
+	LogicProcessor.prototype.getOutputNodes = function(gate)
+	{
+		return this.outputGates.length;
+	};
+	
 
 	LogicProcessor.prototype.processGate = function(gate)
 	{
 		switch (gate.type)
 		{
 			case "out":
-				gate.setActivated(statusForGroups[gate.inputGroups[0]]);
+				gate.activated = this.statusForGroups[gate.inputGroups[0]];
 				break;
 
 			case "not":
-				this.setGateStatus(gate.outputGroups[0],gate,!statusForGroups[gate.inputGroups[0]]);
+				this.setGateStatus(gate.outputGroups[0],gate,!this.statusForGroups[gate.inputGroups[0]]);
 				break;
 
 			case "nand":
-				this.setGateStatus(gate.outputGroups[0],gate,!(statusForGroups[gate.inputGroups[0]] && statusForGroups[gate.inputGroups[1]]));
+				this.setGateStatus(gate.outputGroups[0],gate,!(this.statusForGroups[gate.inputGroups[0]] && this.statusForGroups[gate.inputGroups[1]]));
 				break;
 
 			case "and":
-				this.setGateStatus(gate.outputGroups[0],gate,statusForGroups[gate.inputGroups[0]] && statusForGroups[gate.inputGroups[1]]);
+				this.setGateStatus(gate.outputGroups[0],gate,this.statusForGroups[gate.inputGroups[0]] && this.statusForGroups[gate.inputGroups[1]]);
 				break;
 
 			case "or":
-				this.setGateStatus(gate.outputGroups[0],gate,statusForGroups[gate.inputGroups[0]] || statusForGroups[gate.inputGroups[1]]);
+				this.setGateStatus(gate.outputGroups[0],gate,this.statusForGroups[gate.inputGroups[0]] || this.statusForGroups[gate.inputGroups[1]]);
 				break;
 
 			case "xor":
-				this.setGateStatus(gate.outputGroups[0],gate,statusForGroups[gate.inputGroups[0]] != statusForGroups[gate.inputGroups[1]]);
+				this.setGateStatus(gate.outputGroups[0],gate,this.statusForGroups[gate.inputGroups[0]] !== this.statusForGroups[gate.inputGroups[1]]);
 				break;
 
+			case "composite":
+				debugger;
+				for (var i =0; i < gate.logic.inputGates.length; i++)
+				{
+
+					gate.logic.setGateStatus(gate.logic.inputGates[i].outputGroups[0],gate.logic.inputGates[i],this.statusForGroups[gate.inputGroups[i]]);
+				}
+				for (var i =0; i < gate.logic.outputGates.length; i++)
+				{
+
+					this.setGateStatus(gate.outputGroups[i],gate.logic.outputGates[i],gate.logic.statusForGroups[gate.logic.outputGates[i].inputGroups[0]]);
+				}
+
+				break;
+				
+				
 
 			default:
 				console.error("Gate could not be processed",gate.type,gate);
@@ -113,8 +167,8 @@ define(function()
 		if (gate.type !== "in")
 			return;
 
-		var status = !gate.getActivated();
-		gate.setActivated(status);
+		var status = !gate.activated;
+		gate.activated = status;
 
 		this.setGateStatus(gate.outputGroups[0],gate,status);
 	};
@@ -122,17 +176,17 @@ define(function()
 	LogicProcessor.prototype.setGateStatus = function(outputGroup,gate,status)
 	{
 
-		if (status === statusForGroups[outputGroup])
+		if (status === this.statusForGroups[outputGroup])
 		{
 			return;
 		}
 
-		wiresForGroup[outputGroup].forEach(function (wire)
+		this.wiresForGroup[outputGroup].forEach(function (wire)
 		{
 			wire.setActivated(status);
 		});
 
-		statusForGroups[outputGroup] = status;
+		this.statusForGroups[outputGroup] = status;
 
 		this.gates.forEach(function (anotherGate)
 		{

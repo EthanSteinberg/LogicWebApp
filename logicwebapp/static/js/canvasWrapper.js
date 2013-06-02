@@ -50,7 +50,9 @@ define(["domReady!","imageManager","gates","wires","shapes"],function(dom,imageM
 	obj.setState = function(aState)
 	{
 		state = aState;
+		shapes.allPositions = state.currentPositions;
 		mode = null;
+		window.state = state;
 
 	};
 
@@ -145,9 +147,14 @@ define(["domReady!","imageManager","gates","wires","shapes"],function(dom,imageM
 	imageManager.loadImages(["and.png","not.png","or.png","xor.png","nand.png","in.png","out.png","in-on.png","out-on.png"], function(result)
 	{
 		gates.setImages(result);
-		obj.addGate = function(name)
+		obj.addGate = function(name,gateState,realName,id)
 		{
-			var gateObj = new gates.Gate(-translateX,-translateY,name);
+			var gateObj;
+			if (name == "composite")
+				gateObj =  new gates.Gate(-translateX,-translateY,name,gateState,realName,id);
+			else
+				gateObj = new gates.Gate(-translateX,-translateY,name);
+
 			state.currentGates.push(gateObj);
 			state.currentNodes = state.currentNodes.concat(gateObj.getNodes());
 			console.log(gateObj);

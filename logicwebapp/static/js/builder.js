@@ -41,6 +41,14 @@ define(["canvasWrapper","buttonController","modes","serialize"],function(canvasW
 
 		});
 
+		buttonController.onAddButton(function ()
+		{
+			$("#addDesignId").val("");
+			$("#addDesignName").val("");
+			$(".openErrors").html("");
+			$("#addModal").modal("show");
+		});
+
 		$("#openButton").click(function()
 		{
 			//alert("Hi");
@@ -54,7 +62,7 @@ define(["canvasWrapper","buttonController","modes","serialize"],function(canvasW
 				console.log(result);
 				if (result.error)
 				{
-					$("#openErrors").html(result.error);
+					$(".openErrors").html(result.error);
 				}
 				else
 				{
@@ -67,10 +75,38 @@ define(["canvasWrapper","buttonController","modes","serialize"],function(canvasW
 			});
 		});
 
+		$("#addButton").click(function()
+		{
+			//alert("Hi");
+			//alert($("#oldDesignId").val());
+			var id = $("#addDesignId").val();
+			$.ajax({
+				type: "GET",
+				url: "/open/" + id,
+			}).done(function( msg ) {
+				var result = JSON.parse(msg);
+				console.log(result);
+				if (result.error)
+				{
+					$(".openErrors").html(result.error);
+				}
+				else
+				{
+					$("#addModal").modal("hide");
+					var st = serialize.deserialize(msg,result);
+					
+
+					canvasWrapper.addGate("composite",st,$("#addDesignName").val(),id);
+				}
+				
+			});
+		});
+
+
 		buttonController.onOpenButton(function()
 		{
 			$("#oldDesignId").val("");
-			$("#openErrors").html("");
+			$(".openErrors").html("");
 			$("#openModal").modal("show");
 
 		});
