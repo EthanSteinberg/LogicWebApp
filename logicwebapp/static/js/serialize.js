@@ -124,6 +124,8 @@ define(["shapes","wires","gates"],function(shapes,wires,gates)
 		giveId(state.currentGates);
 		giveId(state.currentWires);
 
+		giveId(shapes.allPositions);
+
 		state.currentNodes.forEach(function (node)
 		{
 			if (node.gate)

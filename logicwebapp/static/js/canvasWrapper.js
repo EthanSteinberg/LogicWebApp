@@ -1,4 +1,4 @@
-define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,gates,wires)
+define(["domReady!","imageManager","gates","wires","shapes"],function(dom,imageManager,gates,wires,shapes)
 {
 	"use strict";
 
@@ -24,6 +24,12 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 
 	var mode = null;
 
+	var scale = 1;
+
+	var translateX = 0;
+	var translateY = 0;
+
+
 	function getLocalX(event)
 	{
 		return event.pageX - $(canvas).offset().left;
@@ -34,12 +40,7 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 		return event.pageY - $(canvas).offset().top;
 	}
 
-	$(canvas).mousedown(function(event){
-		event.preventDefault();
-		var localX = getLocalX(event);
-		var localY = getLocalY(event);
-		mode.mousedown(localX,localY,state);
-	});
+	
 
 	obj.getState = function()
 	{
@@ -53,13 +54,65 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 
 	};
 
+	var keyMap = {};
+
+
+	$(window).ready(function()
+	{
+		var bodyHeight = window.innerHeight;
+		canvas.height = bodyHeight-200;
+	});
+
+	$(window).resize(function()
+	{
+		var bodyHeight = window.innerHeight;
+		canvas.height = bodyHeight-200;
+	});
+
+	$(canvas).attr("tabindex","0");
+
+	$(canvas).keydown(function (event)
+	{
+		keyMap[event.which] = true;
+	});
+
+	$(canvas).keyup(function (event)
+	{
+		delete keyMap[event.which];
+	});
+
+	$(canvas).mousedown(function(event){
+		$(this).focus();
+		event.preventDefault();
+		var localX = getLocalX(event);
+		var localY = getLocalY(event);
+		if (zoomInCircle.contains(localX,localY))
+		{
+			scale *= 1.5
+		}
+		else if (zoomOutCircle.contains(localX,localY))
+		{
+			scale /= 1.5;
+		}
+		else if (mode)
+			mode.mousedown(localX/scale - translateX,localY/scale - translateY,state,state);
+	});
+
 	$(canvas).mousemove(function(event){
 		event.preventDefault();
 
 		var localX = getLocalX(event);
 		var localY = getLocalY(event);
-		mode.mousemove(localX,localY,state);
 
+		if (mode)
+			mode.mousemove(localX/scale - translateX,localY/scale - translateY,state);
+
+	});
+
+
+	$(canvas).blur(function()
+	{
+		keyMap = {};
 	});
 
 
@@ -70,7 +123,8 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 		var localX = getLocalX(event);
 		var localY = getLocalY(event);
 
-		mode.mouseup(localX,localY,state);
+		if (mode)
+			mode.mouseup(localX/scale - translateX,localY/scale - translateY,state,state);
 	});
 
 	$(canvas).mouseup(function(event) {
@@ -78,15 +132,22 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 		var localX = getLocalX(event);
 		var localY = getLocalY(event);
 
-		mode.mouseup(localX,localY,state);
+		if (mode)
+			mode.mouseup(localX/scale - translateX,localY/scale - translateY,state,state);
 	});
+
+	var zoomInCircle = new shapes.Circle(new shapes.Position(25,25),15);
+	var zoomOutCircle = new shapes.Circle(new shapes.Position(25,65),15);
+
+
+	var oldTime = false;
 
 	imageManager.loadImages(["and.png","not.png","or.png","xor.png","nand.png","in.png","out.png","in-on.png","out-on.png"], function(result)
 	{
 		gates.setImages(result);
-		obj.addGate = function(name,x,y)
+		obj.addGate = function(name)
 		{
-			var gateObj = new gates.Gate(x,y,name);
+			var gateObj = new gates.Gate(-translateX,-translateY,name);
 			state.currentGates.push(gateObj);
 			state.currentNodes = state.currentNodes.concat(gateObj.getNodes());
 			console.log(gateObj);
@@ -101,9 +162,79 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 			}
 		}
 
-		function animate()
+		function drawPlusSign()
 		{
+			var radius = 15;
+			var cx = radius+10;
+			var cy = radius+10;
+			ctx.lineWidth = 2;
+
+			ctx.beginPath();
+			ctx.arc(cx,cy,radius,0,2*Math.PI,true);
+			ctx.stroke();
+
+
+			ctx.beginPath();
+			ctx.moveTo(cx-radius*2/3,cy);
+			ctx.lineTo(cx+radius*2/3,cy);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(cx,cy-radius*2/3);
+			ctx.lineTo(cx,cy+radius*2/3);
+			ctx.stroke();
+
+			ctx.lineWidth = 1;
+		}
+
+		function drawMinusSign()
+		{
+			var radius = 15;
+			var cx = radius+10;
+			var cy = radius+50;
+			ctx.lineWidth = 2;
+
+			ctx.beginPath();
+			ctx.arc(cx,cy,radius,0,2*Math.PI,true);
+			ctx.stroke();
+
+
+			ctx.beginPath();
+			ctx.moveTo(cx-radius*2/3,cy);
+			ctx.lineTo(cx+radius*2/3,cy);
+			ctx.stroke();
+
+
+			ctx.lineWidth = 1;
+		}
+
+		function animate(time)
+		{
+			
+			if (oldTime)
+			{
+				var delta = time - oldTime;
+				if (37 in keyMap)
+					translateX += .1 * delta/scale;
+				if (38 in keyMap)
+					translateY += .1 * delta/scale;
+				if (39 in keyMap)
+					translateX -= .1 * delta/scale;
+				if (40 in keyMap)
+					translateY -= .1 * delta/scale;
+
+				oldTime = time;
+			}
+			else
+				oldTime = time;
+
+
 			ctx.clearRect(0,0,canvas.width,canvas.height);
+
+			ctx.save();
+
+			ctx.scale(scale,scale);
+			ctx.translate(translateX,translateY);
 
 			reverseIterate(state.currentGates,function(gate) 
 			{
@@ -123,6 +254,10 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 				wire.draw(ctx);
 
 			});
+
+			ctx.restore();
+			drawPlusSign();
+			drawMinusSign();
 
 
 			window.requestAnimationFrame(animate);
@@ -148,9 +283,9 @@ define(["domReady!","imageManager","gates","wires"],function(dom,imageManager,ga
 	};
 
 
-	obj.addNode = function(x,y)
+	obj.addNode = function()
 	{
-		var newNode = new wires.Node(x,y);
+		var newNode = new wires.Node(-translateX+20,-translateY+20);
 		state.currentNodes.push(newNode);
 	};
 

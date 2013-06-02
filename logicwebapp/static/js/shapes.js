@@ -18,7 +18,6 @@ define(function()
 		this.y = y;
 
 		this.oldPos = oldPos;
-		this.id = obj.allPositions.length;
 		obj.allPositions.push(this);
 	}
 

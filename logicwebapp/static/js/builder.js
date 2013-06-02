@@ -17,13 +17,13 @@ define(["canvasWrapper","buttonController","modes","serialize"],function(canvasW
 
 		buttonController.onAddGate(function (gate)
 		{
-			canvasWrapper.addGate(gate,0,0);
+			canvasWrapper.addGate(gate);
 		});
 
 
 		buttonController.onAddNode(function ()
 		{
-			canvasWrapper.addNode(20,20);
+			canvasWrapper.addNode();
 		});
 
 
