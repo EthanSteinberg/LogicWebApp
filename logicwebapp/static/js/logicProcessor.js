@@ -44,7 +44,7 @@ define(function()
 		{
 			return gate.type === "out";
 		});
-	}
+	};
 
 
 	LogicProcessor.prototype.floodFillRecurse = function (currentNode,currentGroup)
@@ -97,12 +97,12 @@ define(function()
 
 	}
 
-	LogicProcessor.prototype.getInputNodes = function(gate)
+	LogicProcessor.prototype.getInputNodes = function()
 	{
 		return this.inputGates.length;
 	};
 
-	LogicProcessor.prototype.getOutputNodes = function(gate)
+	LogicProcessor.prototype.getOutputNodes = function()
 	{
 		return this.outputGates.length;
 	};
@@ -137,13 +137,12 @@ define(function()
 				break;
 
 			case "composite":
-				debugger;
 				for (var i =0; i < gate.logic.inputGates.length; i++)
 				{
 
 					gate.logic.setGateStatus(gate.logic.inputGates[i].outputGroups[0],gate.logic.inputGates[i],this.statusForGroups[gate.inputGroups[i]]);
 				}
-				for (var i =0; i < gate.logic.outputGates.length; i++)
+				for (i =0; i < gate.logic.outputGates.length; i++)
 				{
 
 					this.setGateStatus(gate.outputGroups[i],gate.logic.outputGates[i],gate.logic.statusForGroups[gate.logic.outputGates[i].inputGroups[0]]);

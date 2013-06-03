@@ -159,8 +159,13 @@ define(["shapes","wires","gates","logicProcessor"],function(shapes,wires,gates,l
 					gates:
 					gate.logic.gates.map(function (gate)
 					{
-						return {inputGroups: gate.inputGroups, outputGroups: gate.outputGroups,type : gate.type, yValue: gate.yValue};
+						var tmp =  {inputGroups: gate.inputGroups, outputGroups: gate.outputGroups,type : gate.type, yValue: gate.yValue};
+						if (gate.type === "composite")
+							tmp.logic = gate.logic;
+
+						return tmp;
 					}),
+
 					statusForGroups : gate.logic.statusForGroups,
 					wiresForGroup : gate.logic.wiresForGroup.map(function () {return [];})
 
