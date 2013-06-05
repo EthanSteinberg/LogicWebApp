@@ -27,10 +27,22 @@ define(function()
 			return a.yValue - b.yValue;
 		});
 		this.setInputAndOutput();
+
+		this.toggleAllInputs();
 		console.log(state);
+
+
 
 	}
 
+	LogicProcessor.prototype.toggleAllInputs = function()
+	{
+		this.inputGates.forEach(function (gate)
+		{
+			this.statusForGroups[gate.outputGroups[0]] = true;
+			this.setGateStatus(gate.outputGroups[0],gate,false);
+		},this);
+	};
 
 
 	LogicProcessor.prototype.setInputAndOutput = function()
