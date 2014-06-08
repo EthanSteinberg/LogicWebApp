@@ -10,8 +10,8 @@ A javascript application for building and simulating digital logic.
 * Allows routing freedom through the use of nodes.
 
 ### Logic Gate Builder:
-[builder](https://github.com/Lalaland/LogicWebApp/raw/master/images/builder.png)
+![builder](https://github.com/Lalaland/LogicWebApp/raw/master/images/builder.png)
 
 ### Logic Gate Viewer:
-[viewer](https://github.com/Lalaland/LogicWebApp/raw/master/images/viewer.png)
+![viewer](https://github.com/Lalaland/LogicWebApp/raw/master/images/viewer.png)
 
